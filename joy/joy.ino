@@ -26,7 +26,7 @@ void loop() {
  calc = calc > 0 ? calc : 0;
  analogWrite(ama1, calc);
  
-calc = ((float) (x - 512)) / 8;
+ calc = ((float) (x - 512)) / 8;
  calc = -calc > 0 ? 256 - calc : 0;
  analogWrite(roj1, calc);
 
@@ -38,5 +38,9 @@ calc = ((float) (x - 512)) / 8;
  calc = -calc > 0 ? 256 - calc : 0;
  analogWrite(roj2, calc);
 
+ calc = ((float) (x - 512) / 8;
+ calc = calc > 0 ? clac : 0;
+ analogWrite(ama1, calc):
+ 
  delay(100);
 }
