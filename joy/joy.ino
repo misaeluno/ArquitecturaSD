@@ -4,10 +4,10 @@
 int x = 0;
 int y = 0;
 
-int ama1 = 12;//derecha
-int ama2 = 10;//abajo
+int ama1 = 13;//derecha
+int ama2 = 10;//arriba
 int roj1 = 9;//izquierda
-int roj2 = 11;//arriba
+int roj2 = 11;//abajo
 float calc;
 
 void setup() {
@@ -21,26 +21,22 @@ void setup() {
 void loop() {
  x = analogRead(VRX); 
  y = analogRead(VRY);
-
+ 
  calc = ((float) (x - 512)) / 8;
  calc = calc > 0 ? calc : 0;
  analogWrite(ama1, calc);
- 
+
  calc = ((float) (x - 512)) / 8;
  calc = -calc > 0 ? 256 - calc : 0;
  analogWrite(roj1, calc);
 
  calc = ((float) (y - 512)) / 8;
  calc = calc > 0 ? calc : 0;
- analogWrite(ama2, calc);
+ analogWrite(roj2, calc);
 
  calc = ((float) (y - 512)) / 8;
  calc = -calc > 0 ? 256 - calc : 0;
- analogWrite(roj2, calc);
-
- calc = ((float) (x - 512) / 8;
- calc = calc > 0 ? clac : 0;
- analogWrite(ama1, calc):
+ analogWrite(ama2, calc);
  
  delay(100);
 }
