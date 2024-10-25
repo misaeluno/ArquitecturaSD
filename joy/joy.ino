@@ -25,7 +25,7 @@ void loop() {
 //DERECHA AMARAILLO
   calc = ((float) (x-521)) / 8;
   calc = calc > 0 ? calc : 0;
-  calc = calc+100;
+  calc = calc;
   analogWrite(ama1, calc);
 
 //IZQUIERDA ROJO
