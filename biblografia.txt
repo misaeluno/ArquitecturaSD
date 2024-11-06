@@ -6,3 +6,4 @@ flipflop JK-  https://youtu.be/M9toqPQghaA?si=R7cflQd2SyK10vDc
 boton de Arduino-  https://youtu.be/jQR3IYY63wg?si=MEqHMbHV0LEJIGSP
 conexion de un 8x8 sin difinir- https://youtu.be/eMTjrQj3LNs?si=ZOQ_1rSbfk99dwsa
 1088AS conexion- https://blog.uelectronics.com/tarjetas-desarrollo/arduino/como-programar-y-a-hacer-la-conexion-matriz-led8x8/
+conexion de joynkoing hw-504-  http://www.handsontec.com/dataspecs/accessory/PS2-Joystick.pdf
