@@ -20,10 +20,8 @@ void loop() {
 	// Revisamos si hay nuevas tarjetas  presente
 	if ( mfrc522.PICC_IsNewCardPresent()) { 
     //Seleccionamos una tarjeta
-    Serial.println("NNBMBBMNB");
     if ( mfrc522.PICC_ReadCardSerial()) {
       // Enviamos serialemente su UID
-      Serial.println("INGRESE TARJETA");
       Serial.print("Card UID:");
       for (byte i = 0; i < mfrc522.uid.size; i++) {
         Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
@@ -32,7 +30,6 @@ void loop() {
       Serial.println();
       // Terminamos la lectura de la tarjeta  actual
       mfrc522.PICC_HaltA();
-      Serial.println("INGRESE TARJETA");
     }      
 	}	
 }
