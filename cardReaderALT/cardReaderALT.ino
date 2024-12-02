@@ -47,16 +47,18 @@ Id ListPop(List *list, int index);                  //Se crea funcion "ListPop",
 Id ListGet(List *list, int index);
 void ListPrint(List *list);
 int ListCompare(List *list, Id id);
-int ListGetPos(List *list, Id id);
+int IdEquals(Id id1, Id id2);
 
-List cards = { NULL, NULL, 0 };
-List keychain = { NULL, NULL, 0 };
+// se agregaran los participan que pueden ingresar
+Id cards[5] = { (Id) { { 23, 7, 85, 134 } }, (Id) { { 99, 166, 43, 40 } }, (Id) { { 243, 31, 18, 173 } }, (Id) { { 122, 238, 23, 2 } }, (Id) { { 7, 111, 31, 134 } } };
+Id keychain[5] = { (Id) { { 138, 24, 222, 0 } }, (Id) { { 19, 146, 71, 20 } }, (Id) { { 100, 23, 206, 207 } }, (Id) { { 83, 188, 184, 44 } }, (Id) { { 38, 180, 126, 0 } } };
 List regCards = { NULL, NULL, 0 };
 List regKeychain = { NULL, NULL, 0 };
 Id id = { 0 };
 int pressDPL = 0;
 int pressDLT = 0;
 int mode = 1;
+int pos;
 
 void setup() {
   Serial.begin(9600);
@@ -72,23 +74,6 @@ void setup() {
   pinMode(GRN, OUTPUT);
   pinMode(RED, OUTPUT);
   Serial.println("Place your card near the reader...");
-// se agregaran los participan que pueden ingresar
-  //Tarjets
-  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });
-  ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
-  ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });
-  ListAppend(&cards, (Id) { { 243, 31, 18, 173 } });
-  ListAppend(&cards, (Id) { { 122, 238, 23, 2 } });
-  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
-  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });
-  //Llaveros
-  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });
-  ListAppend(&keychain, (Id) { { 138, 24, 222, 0 } });
-  ListAppend(&keychain, (Id) { { 19, 146, 71, 20 } });
-  ListAppend(&keychain, (Id) { { 100, 23, 206, 207 } });
-  ListAppend(&keychain, (Id) { { 83, 188, 184, 44 } });
-  ListAppend(&keychain, (Id) { { 38, 180, 126, 0 } });
-  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });
 }
 
 void loop() {
@@ -133,19 +118,19 @@ void loop() {
   Serial.print(" ");
  }
  Serial.println();
- if (ListCompare(&cards, id) && mode) {
-  if (!ListCompare(&regCards, id)) {
+ for (pos = 0; pos < 5; pos++) {
+  if (IdEquals(cards[pos], id) && mode && !ListCompare(&regCards, id)) {
    ListAppend(&regCards, id);
-   id = ListGet(&keychain, ListGetPos(&cards, id));
-   ListAppend(&regKeychain, id);
+   ListAppend(&regKeychain, keychain[pos]);
+   digitalWrite(GRN, HIGH);
+   break;
+  }
+  else if (ListCompare(&regKeychain, id) && !mode) {
    digitalWrite(GRN, HIGH);
   }
- }
- else if (ListCompare(&regKeychain, id) && !mode) {
-  digitalWrite(GRN, HIGH);
- }
- else {
-  digitalWrite(RED, HIGH);
+  else {
+   digitalWrite(RED, HIGH);
+  }  
  }
  // Halt PICC (to stop it from constantly reading the same card)
  rfid.PICC_HaltA();
@@ -214,40 +199,9 @@ int ListCompare(List *list, Id id) {
  Node *current = list->tail;
  int i, j, correct;
  for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
-  for (j = 0; j < 4; j++) {
-    //Serial.print(current->id.data[i], DEC);
-    //Serial.print(" - ");
-    //Serial.print(id.data[i], DEC);
-    //Serial.println();
-    if (current->id.data[j] == id.data[j]) {
-      correct++;
-    }
-    else break;
-    if (correct == 4) return 1;
-  }
+  if (IdEquals(current->id, id)) return 1;
  } 
  return 0;
-}
-
-// Obtengo el indice del dato concreto
-int ListGetPos(List *list, Id id) {
- if (list->size == 0) return -1;
- Node *current = list->tail;
- int i, j, correct;
- for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
-  for (j = 0; j < 4; j++) {
-    if (current->id.data[j] == id.data[j]) {
-      correct++;
-    }
-    else break;
-    if (correct == 4) {
-      Serial.print(i, DEC);
-      Serial.println();
-      return i;
-    }
-  }
- } 
- return -1;
 }
 
 // Obtiene el dato dado una posición
@@ -261,4 +215,20 @@ Id ListGet(List *list, int index) {
         current = current->next;
     }
     return current->id;
+}
+
+int IdEquals(Id id1, Id id2) {
+  int i, correct;
+  for (i = 0, correct = 0; i < 4; i++) {
+    //Serial.print(current->id.data[i], DEC);
+    //Serial.print(" - ");
+    //Serial.print(id.data[i], DEC);
+    //Serial.println();
+    if (id1.data[i] == id2.data[i]) {
+      correct++;
+    }
+    else break;
+    if (correct == 4) return 1;
+  }
+  return 0;
 }
