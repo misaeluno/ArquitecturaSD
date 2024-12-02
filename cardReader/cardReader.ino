@@ -45,7 +45,7 @@ Node *CreateNode(Id id);                            //Se crea la funcion "Create
 int ListAppend(List *list, Id id);                  //Se crea funcion "ListAppend" que agrega un node al final
 Id ListPop(List *list, int index);                  //Se crea funcion "ListPop", que permite sacar un elemento
 int ListInsert(List *list, int index, Id id);       //Se crea funcion "ListInsert", 
-Id ListGet(List *list, int index);
+Id ListGet(List *list, int index);                  //
 void ListFree(List *list);
 void ListPrint(List *list);
 int ListCompare(List *list, Id id);
@@ -68,7 +68,7 @@ void setup() {
   pinMode(GRN, OUTPUT);
   pinMode(RED, OUTPUT);
   Serial.println("Place your card near the reader...");
-// se agregaran los participan que pueden ingresar
+  //se agregaran los participan que pueden ingresar
   //Tarjets
   ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
   ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });
@@ -122,6 +122,7 @@ void loop() {
  digitalWrite(RED, LOW);
 }
 
+//Se definen las funciones
 Node* CreateNode(Id id) {
  Node *newNode = (Node*)malloc(sizeof(Node));
  if (!newNode) {
