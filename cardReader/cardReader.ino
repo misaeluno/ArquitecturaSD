@@ -69,16 +69,16 @@ void setup() {
 
   //Tarjets
   ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
-  ListAppend(&cards, (Id) { { 63, 166, 43, 28 } });
-  ListAppend(&cards, (Id) { { 64, 17, 206, 207 } });
-  ListAppend(&cards, (Id) { { 53, 188, 184, 44 } });
+  ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });
+  ListAppend(&cards, (Id) { { 243, 31, 18, 173 } });
+  ListAppend(&cards, (Id) { { 122, 238, 23, 2 } });
   ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
   //Llaveros
   ListAppend(&cards, (Id) { { 38, 180, 126, 0 } });
   ListAppend(&cards, (Id) { { 19, 146, 71, 20 } });
-  ListAppend(&cards, (Id) { { , 111, 31, 134 } });
-  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
-  ListAppend(&cards, (Id) { { 138, 24, 222, 0 } });
+  ListAppend(&cards, (Id) { { 100, 23, 206, 207 } });
+  ListAppend(&cards, (Id) { { 83, 188, 184, 44 } });
+  ListAppend(&cards, (Id) { { 38, 180, 126, 0 } });
 }
 
 void loop() {
