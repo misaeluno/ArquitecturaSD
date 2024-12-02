@@ -24,19 +24,19 @@ typedef struct Node Node;
 typedef struct List List;
 
 struct Id {
- int data[4];
+  int data[4];
 };
 
 struct Node {
- Id id;
- Node *prev;
- Node *next;
+  Id id;
+  Node *prev;
+  Node *next;
 };
 
 struct List {
- Node *tail;
- Node *head;
- int size;
+  Node *tail;
+  Node *head;
+  int size;
 };
 
 Node *CreateNode(Id id);
@@ -53,22 +53,36 @@ List keychain = { NULL, NULL, 0 };
 Id id = { 0 };
 
 void setup() {
- Serial.begin(9600);
- SPI.begin();
- rfid.PCD_Init();
- pinMode(MISO, INPUT);
- pinMode(MOSI, OUTPUT);
- pinMode(SCK, OUTPUT);
- pinMode(SDA, OUTPUT);
- pinMode(RST, INPUT);
- pinMode(DPL, INPUT_PULLUP);
- pinMode(DLT, INPUT_PULLUP);
- pinMode(GRN, OUTPUT);
- pinMode(RED, OUTPUT);
- Serial.println("Place your card near the reader...");
+  Serial.begin(9600);
+  SPI.begin();
+  rfid.PCD_Init();
+  pinMode(MISO, INPUT);
+  pinMode(MOSI, OUTPUT);
+  pinMode(SCK, OUTPUT);
+  pinMode(SDA, OUTPUT);
+  pinMode(RST, INPUT);
+  pinMode(DPL, INPUT_PULLUP);
+  pinMode(DLT, INPUT_PULLUP);
+  pinMode(GRN, OUTPUT);
+  pinMode(RED, OUTPUT);
+  Serial.println("Place your card near the reader...");
+
+  //Tarjets
+  ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
+  ListAppend(&cards, (Id) { { 63, 166, 43, 28 } });
+  ListAppend(&cards, (Id) { { 64, 17, 206, 207 } });
+  ListAppend(&cards, (Id) { { 53, 188, 184, 44 } });
+  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
+  //Llaveros
+  ListAppend(&cards, (Id) { { 38, 180, 126, 0 } });
+  ListAppend(&cards, (Id) { { 19, 146, 71, 20 } });
+  ListAppend(&cards, (Id) { { , 111, 31, 134 } });
+  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
+  ListAppend(&cards, (Id) { { 138, 24, 222, 0 } });
 }
 
 void loop() {
+
  if (digitalRead(DPL)) {
   ListPrint(&cards);
   ListPrint(&keychain);
@@ -98,6 +112,7 @@ void loop() {
  // Stop encryption on PCD
  rfid.PCD_StopCrypto1();
 
+ 
  digitalWrite(GRN, HIGH);
  digitalWrite(RED, HIGH);
  delay(1000);
