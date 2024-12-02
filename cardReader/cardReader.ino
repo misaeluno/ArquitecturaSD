@@ -156,19 +156,6 @@ int ListAppend(List *list, Id id) {
  return 1;
 }
 
-
-void ListFree(List *list) {
- if (list->size == 0) return;
- Node *current = list->tail;
- Node *next = NULL;
- while (current) {
-  next = current->next;
-  free(current);
-  current = next;
- }
- current = next = NULL;
-}
-
 // Imprimo los datos de la lista de manera comprensible
 void ListPrint(List *list) {
  if (list->size == 0) return;
@@ -190,21 +177,36 @@ void ListPrint(List *list) {
 int ListCompare(List *list, Id id) {
  if (list->size == 0) return 0;
  Node *current = list->tail;
- int i = 0;
- int correct = 0;
- while (current) {
-  for (i = 0; i < 4; i++) {
+ int i, j, correct;
+ for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
+  for (j = 0; j < 4; j++) {
     //Serial.print(current->id.data[i], DEC);
     //Serial.print(" - ");
     //Serial.print(id.data[i], DEC);
     //Serial.println();
-    if (current->id.data[i] == id.data[i]) {
+    if (current->id.data[j] == id.data[j]) {
       correct++;
     }
     else break;
     if (correct == 4) return 1;
   }
-  current = current->next;
  } 
  return 0;
+}
+
+// Obtengo el indice del dato concreto
+int ListGetPos(List *list, Id id) {
+ if (list->size == 0) return -1;
+ Node *current = list->tail;
+ int i, j, correct;
+ for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
+  for (j = 0; j < 4; j++) {
+    if (current->id.data[j] == id.data[j]) {
+      correct++;
+    }
+    else break;
+    if (correct == 4) return i;
+  }
+ } 
+ return -1;
 }
