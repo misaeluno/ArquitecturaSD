@@ -10,8 +10,12 @@ void setup(){
 }
 
 void loop(){
-  x = (analogRead(VRX) - 512)/256; 
-  y = -(analogRead(VRY) - 256)/256;
+  x = analogRead(VRX);
+  y = analogRead(VRY);
+  Serial.print("Eje x: ");
+  Serial.println(x, DEC);
+  Serial.print("Eje y: ");
+  Serial.println(y, DEC);
 
   for (j = 2; j < 10; j++){
     digitalWrite(j, LOW);
@@ -25,7 +29,7 @@ void loop(){
   
 ///////////////////////////////////////////////////////////////
 
-  if (x < 0){                      //si se preciona la izquierda entra
+  if (x == 0){                      //si se preciona la izquierda entra
     //FLECHA IZQUIERZA
     for (j = 2; j < 10; j++){       //Acegura que el si ahay un
       digitalWrite(j, LOW);         //comando anterior este 
@@ -119,7 +123,7 @@ void loop(){
     }
   }
 
-  else if(x > 0) {  //si se preciona la derecha entra
+  else if(x > 10) {  //si se preciona la derecha entra
     //FLECHA DERECHA     
     for (j = 2; j < 10; j++){
       digitalWrite(j, LOW);
@@ -192,7 +196,7 @@ void loop(){
     }
   }
 
-  else if(y > 0){  //si se preciona arriba entra
+  else if(y == 0){  //si se preciona arriba entra
     //LINEA CONTINUA
     for (j = 3; j < 10; j++){
       digitalWrite(j, HIGH);
@@ -205,7 +209,7 @@ void loop(){
     }
   }
 
-  else if(y < 0){  //si se preciona abajo entra
+  else if(y > 520){  //si se preciona abajo entra
     //EXCLAMACION
     digitalWrite(17, LOW);
     digitalWrite(6, HIGH);
@@ -438,4 +442,5 @@ void loop(){
       }
     }
   }
+  delay(10);
 }
