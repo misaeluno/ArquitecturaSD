@@ -23,26 +23,28 @@ typedef struct Id Id;
 typedef struct Node Node;
 typedef struct List List;
 
-struct Id {
+struct Id {       //estructura de las IDs
   int data[4];
 };
 
-struct Node {
+struct Node {     //Node que contiene los IDs de las tarjetas
   Id id;
   Node *prev;
   Node *next;
 };
 
-struct List {
+struct List {   //List contiene a los Node
   Node *tail;
   Node *head;
   int size;
 };
 
-Node *CreateNode(Id id);
-int ListAppend(List *list, Id id);
-Id ListPop(List *list, int index);
-int ListInsert(List *list, int index, Id id);
+//Inicializa funciones (prototipo)
+//estas funciones se definen al final del codigo
+Node *CreateNode(Id id);                            //Se crea la funcion "CreateNode" para poder crear un node
+int ListAppend(List *list, Id id);                  //Se crea funcion "ListAppend" que agrega un node al final
+Id ListPop(List *list, int index);                  //Se crea funcion "ListPop", que permite sacar un elemento
+int ListInsert(List *list, int index, Id id);       //Se crea funcion "ListInsert", 
 Id ListGet(List *list, int index);
 void ListFree(List *list);
 void ListPrint(List *list);
@@ -66,7 +68,7 @@ void setup() {
   pinMode(GRN, OUTPUT);
   pinMode(RED, OUTPUT);
   Serial.println("Place your card near the reader...");
-
+// se agregaran los participan que pueden ingresar
   //Tarjets
   ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
   ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });
