@@ -4,6 +4,7 @@ int Led4 = 11;
 int Led3 = 10;
 int Led2 = 9;
 int Led1 = 8;
+int boton = 3;
 int i;
 int j;
 
@@ -14,6 +15,7 @@ void setup() {
   pinMode(Led4, OUTPUT); 
   pinMode(Led5, OUTPUT); 
   pinMode(Led6, OUTPUT); 
+  pinMode(boton, INPUT);
 }
 
 void loop() {
@@ -22,13 +24,28 @@ void loop() {
   //digitalWrite(Led1, LOW);
   //delay(100);
 
-  for(i=1 ; i <= 6; i++){
-    for(j=8; j<=13; j++){
+  for( i=0 ; i <= 5; i++){
+    for( j=8; j<=13 - i; j++){
       digitalWrite(j, HIGH);
-
-
-
+      digitalWrite(j-1, LOW);
+      delay(250);
     }
+  }
+  
+  while(!digitalRead(boton)){
+    break;
+  }
+
+  for( i=0 ; i <= 5; i++){
+    for( j=8+i; j>=8; j--){
+      digitalWrite(j, LOW);
+      digitalWrite(j-1,HIGH);
+      delay(500);
+    }
+  }
+
+  while(!digitalRead(boton)){
+    break;
   }
 
 }
