@@ -44,15 +44,25 @@ struct List {   //List contiene a los Node
 Node *CreateNode(Id id);                            //Se crea la funcion "CreateNode" para poder crear un node
 int ListAppend(List *list, Id id);                  //Se crea funcion "ListAppend" que agrega un node al final
 Id ListPop(List *list, int index);                  //Se crea funcion "ListPop", que permite sacar un elemento
+<<<<<<< HEAD
 int ListInsert(List *list, int index, Id id);       //Se crea funcion "ListInsert", 
 Id ListGet(List *list, int index);                  //
 void ListFree(List *list);
+=======
+Id ListGet(List *list, int index);
+>>>>>>> 3964d47791423963ca6e386fc3d8128a264966ee
 void ListPrint(List *list);
 int ListCompare(List *list, Id id);
+int ListGetPos(List *list, Id id);
 
 List cards = { NULL, NULL, 0 };
 List keychain = { NULL, NULL, 0 };
+List regCards = { NULL, NULL, 0 };
+List regKeychain = { NULL, NULL, 0 };
 Id id = { 0 };
+int pressDPL = 0;
+int pressDLT = 0;
+int mode = 1;
 
 void setup() {
   Serial.begin(9600);
@@ -70,30 +80,49 @@ void setup() {
   Serial.println("Place your card near the reader...");
   //se agregaran los participan que pueden ingresar
   //Tarjets
-  ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
-  ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });
-  ListAppend(&cards, (Id) { { 243, 31, 18, 173 } });
-  ListAppend(&cards, (Id) { { 122, 238, 23, 2 } });
-  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
+  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });            //
+  ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });        //Celeste
+  ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });       //Vicente J
+  ListAppend(&cards, (Id) { { 243, 31, 18, 173 } });      //Compa Quimica
+  ListAppend(&cards, (Id) { { 122, 238, 23, 2 } });       //Brandom
+  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });       //Misael
+  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });            //
   //Llaveros
-  ListAppend(&cards, (Id) { { 38, 180, 126, 0 } });
-  ListAppend(&cards, (Id) { { 19, 146, 71, 20 } });
-  ListAppend(&cards, (Id) { { 100, 23, 206, 207 } });
-  ListAppend(&cards, (Id) { { 83, 188, 184, 44 } });
-  ListAppend(&cards, (Id) { { 38, 180, 126, 0 } });
+  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });         //
+  ListAppend(&keychain, (Id) { { 138, 24, 222, 0 } });    //celeste
+  ListAppend(&keychain, (Id) { { 19, 146, 71, 20 } });    //Vicente J
+  ListAppend(&keychain, (Id) { { 100, 23, 206, 207 } });  //Compa Quimica
+  ListAppend(&keychain, (Id) { { 83, 188, 184, 44 } });   //bramdom
+  ListAppend(&keychain, (Id) { { 38, 180, 126, 0 } });    //Misael
+  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });         //
 }
 
 void loop() {
 
  if (digitalRead(DPL)) {
-  ListPrint(&cards);
-  ListPrint(&keychain);
+  if (pressDPL) {
+   pressDPL = 0;
+   ListPrint(&regCards);
+   ListPrint(&regKeychain);
+  }
+ }
+ else {
+  pressDPL = 1;
  }
  if (digitalRead(DLT)) {
-  ListFree(&cards);
-  ListFree(&keychain);
+  if (pressDPL) {
+   pressDLT = 0;
+   mode = !mode;
+   digitalWrite(GRN, HIGH);
+   digitalWrite(RED, HIGH);
+   delay(1000);
+   digitalWrite(GRN, LOW);
+   digitalWrite(RED, LOW);
+  }
  }
- // Check if a new card is present
+ else pressDLT = 1;
+ 
+ // Revisa si hay alguna nueva tarjeta presente
  if (!rfid.PICC_IsNewCardPresent()) {
    return;  // No card detected, return to loop
  }
@@ -102,21 +131,33 @@ void loop() {
   return;  // Failed to read card UID
  }
  // Display the UID
+ if (mode) Serial.print("Card: ");
+ else Serial.print("Keychain: ");
  for (byte i = 0; i < 4; i++) {
   id.data[i] = rfid.uid.uidByte[i];
+  Serial.print(rfid.uid.uidByte[i], DEC);
+  Serial.print(" ");
  }
- 
- if (!ListCompare(&cards, id)) {
-  ListAppend(&cards, id);
+ Serial.println();
+ if (ListCompare(&cards, id) && mode) {
+  if (!ListCompare(&regCards, id)) {
+   ListAppend(&regCards, id);
+   id = ListGet(&keychain, ListGetPos(&cards, id));
+   ListAppend(&regKeychain, id);
+   digitalWrite(GRN, HIGH);
+  }
+ }
+ else if (ListCompare(&regKeychain, id) && !mode) {
+  digitalWrite(GRN, HIGH);
+ }
+ else {
+  digitalWrite(RED, HIGH);
  }
  // Halt PICC (to stop it from constantly reading the same card)
  rfid.PICC_HaltA();
  // Stop encryption on PCD
  rfid.PCD_StopCrypto1();
 
- 
- digitalWrite(GRN, HIGH);
- digitalWrite(RED, HIGH);
  delay(1000);
  digitalWrite(GRN, LOW);
  digitalWrite(RED, LOW);
@@ -157,19 +198,6 @@ int ListAppend(List *list, Id id) {
  return 1;
 }
 
-
-void ListFree(List *list) {
- if (list->size == 0) return;
- Node *current = list->tail;
- Node *next = NULL;
- while (current) {
-  next = current->next;
-  free(current);
-  current = next;
- }
- current = next = NULL;
-}
-
 // Imprimo los datos de la lista de manera comprensible
 void ListPrint(List *list) {
  if (list->size == 0) return;
@@ -191,21 +219,53 @@ void ListPrint(List *list) {
 int ListCompare(List *list, Id id) {
  if (list->size == 0) return 0;
  Node *current = list->tail;
- int i = 0;
- int correct = 0;
- while (current) {
-  for (i = 0; i < 4; i++) {
+ int i, j, correct;
+ for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
+  for (j = 0; j < 4; j++) {
     //Serial.print(current->id.data[i], DEC);
     //Serial.print(" - ");
     //Serial.print(id.data[i], DEC);
     //Serial.println();
-    if (current->id.data[i] == id.data[i]) {
+    if (current->id.data[j] == id.data[j]) {
       correct++;
     }
     else break;
     if (correct == 4) return 1;
   }
-  current = current->next;
  } 
  return 0;
+}
+
+// Obtengo el indice del dato concreto
+int ListGetPos(List *list, Id id) {
+ if (list->size == 0) return -1;
+ Node *current = list->tail;
+ int i, j, correct;
+ for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
+  for (j = 0; j < 4; j++) {
+    if (current->id.data[j] == id.data[j]) {
+      correct++;
+    }
+    else break;
+    if (correct == 4) {
+      Serial.print(i, DEC);
+      Serial.println();
+      return i;
+    }
+  }
+ } 
+ return -1;
+}
+
+// Obtiene el dato dado una posición
+Id ListGet(List *list, int index) {
+    if (index < 0) {
+        return (Id) { 0, 0, 0, 0 };
+    }
+
+    Node *current = list->head;
+    for (int i = 0; i < index && i < list->size; i++) {
+        current = current->next;
+    }
+    return current->id;
 }
