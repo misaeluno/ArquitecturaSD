@@ -22,10 +22,6 @@ struct Node {     //Node que contiene los IDs de las tarjetas
 //Inicializa funciones (prototipo)
 //estas funciones se definen al final del codigo
 Node *CreateNode(Id Horario);                       //Se crea la funcion "CreateNode" para poder crear un node
-int ListAppend(List *list, Id Horario);             //Se crea funcion "ListAppend" que agrega un node al final
-Id ListPop(List *list, int index);                  //Se crea funcion "ListPop", que permite sacar un elemento
-Id ListGet(List *list, int index);
-
 
 void setup() {
   // put your setup code here, to run once:
