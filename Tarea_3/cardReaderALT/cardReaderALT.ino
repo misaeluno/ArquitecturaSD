@@ -160,7 +160,7 @@ Node* CreateNode(Id id) {
 
 int ListAppend(List *list, Id id) {     //Se procede a inicializar los comando para agregar IDs
  Node *newNode = CreateNode(id);        //Se crea un node auxiliar nombrado "newNode"
- if (!newNode) return 0;                //se comprueba que ¿este vacio?//////////////////////////////////////////////
+ if (!newNode) return 0;                
 
  if (list->head) {
   list->head->next = newNode;
@@ -203,7 +203,7 @@ void ListPrint(List *list) {
 int ListCompare(List *list, Id id) {
  if (list->size == 0) return 0;
  Node *current = list->tail;
- int i, j, correct;                               // la "j" para que es
+ int i, correct;
  for (i = 0, correct = 0; i < list->size; i++, current = current->next) { //exactamente ¿que hace este for?
   if (IdEquals(current->id, id)) return 1;        //¿no es mejor encender aqui el LED verde 
  } 
