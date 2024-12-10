@@ -46,14 +46,17 @@ int ListAppend(List *list, Id id);                  //Se crea funcion "ListAppen
 Id ListPop(List *list, int index);                  //Se crea funcion "ListPop", que permite sacar un elemento
 Id ListGet(List *list, int index);
 void ListPrint(List *list);
-int ListCompare(List *list, Id id);
+int ListCompare(List *list, Id id);                 //Se crea funcion "ListCompare" 
 int IdEquals(Id id1, Id id2);
 
 // se agregaran los participan que pueden ingresar
+                        //Celeste                     //Vicente J                    //Compa Quimica               //Brandom                     //Misael
 Id cards[5] = { (Id) { { 23, 7, 85, 134 } }, (Id) { { 99, 166, 43, 40 } }, (Id) { { 243, 31, 18, 173 } }, (Id) { { 122, 238, 23, 2 } }, (Id) { { 7, 111, 31, 134 } } };
+                          //Celeste                       //Vicente J                     //Compa Quimica               //Brandom                        //Misael
 Id keychain[5] = { (Id) { { 138, 24, 222, 0 } }, (Id) { { 19, 146, 71, 20 } }, (Id) { { 100, 23, 206, 207 } }, (Id) { { 83, 188, 184, 44 } }, (Id) { { 38, 180, 126, 0 } } };
-List regCards = { NULL, NULL, 0 };
-List regKeychain = { NULL, NULL, 0 };
+
+List regCards = { NULL, NULL, 0 };      //Lista dobles enlazadas de tarjeas
+List regKeychain = { NULL, NULL, 0 };   //Lesta dobles enlazadas de llaveros
 Id id = { 0 };
 int pressDPL = 0;
 int pressDLT = 0;
@@ -76,72 +79,75 @@ void setup() {
   Serial.println("Place your card near the reader...");
 }
 
+//Empieza el Loop principal
 void loop() {
 
- if (digitalRead(DPL)) {
-  if (pressDPL) {
-   pressDPL = 0;
-   ListPrint(&regCards);
-   ListPrint(&regKeychain);
-  }
- }
- else {
-  pressDPL = 1;
- }
- if (digitalRead(DLT)) {
-  if (pressDPL) {
-   pressDLT = 0;
-   mode = !mode;
-   digitalWrite(GRN, HIGH);
-   digitalWrite(RED, HIGH);
-   delay(1000);
-   digitalWrite(GRN, LOW);
-   digitalWrite(RED, LOW);
-  }
- }
- else pressDLT = 1;
- 
- // Revisa si hay alguna nueva tarjeta presente
- if (!rfid.PICC_IsNewCardPresent()) {
-   return;  // No card detected, return to loop
- }
- // Check if we can read the card's UID
- if (!rfid.PICC_ReadCardSerial()) {
-  return;  // Failed to read card UID
- }
- // Display the UID
- if (mode) Serial.print("Card: ");
- else Serial.print("Keychain: ");
- for (byte i = 0; i < 4; i++) {
-  id.data[i] = rfid.uid.uidByte[i];
-  Serial.print(rfid.uid.uidByte[i], DEC);
-  Serial.print(" ");
- }
- Serial.println();
- for (pos = 0; pos < 5; pos++) {
-  if (IdEquals(cards[pos], id) && mode && !ListCompare(&regCards, id)) {
-   ListAppend(&regCards, id);
-   ListAppend(&regKeychain, keychain[pos]);
-   digitalWrite(GRN, HIGH);
-   break;
-  }
-  else if (ListCompare(&regKeychain, id) && !mode) {
-   digitalWrite(GRN, HIGH);
+  if (digitalRead(DPL)) {
+    if (pressDPL) {
+    pressDPL = 0;
+    ListPrint(&regCards);
+    ListPrint(&regKeychain);
+    }
   }
   else {
-   digitalWrite(RED, HIGH);
-  }  
- }
- // Halt PICC (to stop it from constantly reading the same card)
- rfid.PICC_HaltA();
- // Stop encryption on PCD
- rfid.PCD_StopCrypto1();
+    pressDPL = 1;
+  }
+  if (digitalRead(DLT)) {
+    if (pressDPL) {
+    pressDLT = 0;
+    mode = !mode;
+    digitalWrite(GRN, HIGH);
+    digitalWrite(RED, HIGH);
+    delay(1000);
+    digitalWrite(GRN, LOW);
+    digitalWrite(RED, LOW);
+    }
+  }
+  else pressDLT = 1;
+  
+  // Revisa si hay alguna nueva tarjeta presente
+  if (!rfid.PICC_IsNewCardPresent()) {
+    return;  // No card detected, return to loop
+  }
+  // Check if we can read the card's UID
+  if (!rfid.PICC_ReadCardSerial()) {
+    return;  // Failed to read card UID
+  }
+  // Display the UID
+  if (mode) Serial.print("Card: ");
+  else Serial.print("Keychain: ");
+  for (byte i = 0; i < 4; i++) {
+    id.data[i] = rfid.uid.uidByte[i];
+    Serial.print(rfid.uid.uidByte[i], DEC);
+    Serial.print(" ");
+  }
+  Serial.println();
+  for (pos = 0; pos < 5; pos++) {
+    if (IdEquals(cards[pos], id) && mode && !ListCompare(&regCards, id)) {
+    ListAppend(&regCards, id);
+    ListAppend(&regKeychain, keychain[pos]);
+    digitalWrite(GRN, HIGH);
+    break;
+    }
+    else if (ListCompare(&regKeychain, id) && !mode) {
+    digitalWrite(GRN, HIGH);
+    }
+    else {
+    digitalWrite(RED, HIGH);
+    }  
+  }
+  // Halt PICC (to stop it from constantly reading the same card)
+  rfid.PICC_HaltA();
+  // Stop encryption on PCD
+  rfid.PCD_StopCrypto1();
 
- delay(1000);
- digitalWrite(GRN, LOW);
- digitalWrite(RED, LOW);
-}
+  delay(1000);
+  digitalWrite(GRN, LOW);
+  digitalWrite(RED, LOW);
 
+}//Termina el LOOP
+
+//comienza las difiniciones de las Funciones
 Node* CreateNode(Id id) {
  Node *newNode = (Node*)malloc(sizeof(Node));
  if (!newNode) {
@@ -152,9 +158,9 @@ Node* CreateNode(Id id) {
  return newNode;
 }
 
-int ListAppend(List *list, Id id) {
- Node *newNode = CreateNode(id);
- if (!newNode) return 0;
+int ListAppend(List *list, Id id) {     //Se procede a inicializar los comando para agregar IDs
+ Node *newNode = CreateNode(id);        //Se crea un node auxiliar nombrado "newNode"
+ if (!newNode) return 0;                
 
  if (list->head) {
   list->head->next = newNode;
@@ -197,11 +203,11 @@ void ListPrint(List *list) {
 int ListCompare(List *list, Id id) {
  if (list->size == 0) return 0;
  Node *current = list->tail;
- int i, j, correct;
- for (i = 0, correct = 0; i < list->size; i++, current = current->next) {
-  if (IdEquals(current->id, id)) return 1;
+ int i, correct;
+ for (i = 0, correct = 0; i < list->size; i++, current = current->next) { //exactamente ¿que hace este for?
+  if (IdEquals(current->id, id)) return 1;        //¿no es mejor encender aqui el LED verde 
  } 
- return 0;
+ return 0;                                        //y aqui el LED rojo?
 }
 
 // Obtiene el dato dado una posición

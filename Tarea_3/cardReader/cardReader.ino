@@ -44,7 +44,13 @@ struct List {   //List contiene a los Node
 Node *CreateNode(Id id);                            //Se crea la funcion "CreateNode" para poder crear un node
 int ListAppend(List *list, Id id);                  //Se crea funcion "ListAppend" que agrega un node al final
 Id ListPop(List *list, int index);                  //Se crea funcion "ListPop", que permite sacar un elemento
+<<<<<<< HEAD
+int ListInsert(List *list, int index, Id id);       //Se crea funcion "ListInsert", 
+Id ListGet(List *list, int index);                  //
+void ListFree(List *list);
+=======
 Id ListGet(List *list, int index);
+>>>>>>> 3964d47791423963ca6e386fc3d8128a264966ee
 void ListPrint(List *list);
 int ListCompare(List *list, Id id);
 int ListGetPos(List *list, Id id);
@@ -72,23 +78,23 @@ void setup() {
   pinMode(GRN, OUTPUT);
   pinMode(RED, OUTPUT);
   Serial.println("Place your card near the reader...");
-// se agregaran los participan que pueden ingresar
+  //se agregaran los participan que pueden ingresar
   //Tarjets
-  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });
-  ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });
-  ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });
-  ListAppend(&cards, (Id) { { 243, 31, 18, 173 } });
-  ListAppend(&cards, (Id) { { 122, 238, 23, 2 } });
-  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });
-  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });
+  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });            //
+  ListAppend(&cards, (Id) { { 23, 7, 85, 134 } });        //Celeste
+  ListAppend(&cards, (Id) { { 99, 166, 43, 40 } });       //Vicente J
+  ListAppend(&cards, (Id) { { 243, 31, 18, 173 } });      //Compa Quimica
+  ListAppend(&cards, (Id) { { 122, 238, 23, 2 } });       //Brandom
+  ListAppend(&cards, (Id) { { 7, 111, 31, 134 } });       //Misael
+  ListAppend(&cards, (Id) { { 0, 0, 0, 0 } });            //
   //Llaveros
-  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });
-  ListAppend(&keychain, (Id) { { 138, 24, 222, 0 } });
-  ListAppend(&keychain, (Id) { { 19, 146, 71, 20 } });
-  ListAppend(&keychain, (Id) { { 100, 23, 206, 207 } });
-  ListAppend(&keychain, (Id) { { 83, 188, 184, 44 } });
-  ListAppend(&keychain, (Id) { { 38, 180, 126, 0 } });
-  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });
+  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });         //
+  ListAppend(&keychain, (Id) { { 138, 24, 222, 0 } });    //celeste
+  ListAppend(&keychain, (Id) { { 19, 146, 71, 20 } });    //Vicente J
+  ListAppend(&keychain, (Id) { { 100, 23, 206, 207 } });  //Compa Quimica
+  ListAppend(&keychain, (Id) { { 83, 188, 184, 44 } });   //bramdom
+  ListAppend(&keychain, (Id) { { 38, 180, 126, 0 } });    //Misael
+  ListAppend(&keychain, (Id) { { 0, 0, 0, 0 } });         //
 }
 
 void loop() {
@@ -157,6 +163,7 @@ void loop() {
  digitalWrite(RED, LOW);
 }
 
+//Se definen las funciones
 Node* CreateNode(Id id) {
  Node *newNode = (Node*)malloc(sizeof(Node));
  if (!newNode) {
