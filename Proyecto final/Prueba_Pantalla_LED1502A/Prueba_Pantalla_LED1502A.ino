@@ -7,16 +7,29 @@ void setup() {
   lcd.init();
   lcd.backlight();
   lcd.clear();
- lcd.setCursor(0,0);
-  lcd.print("08:00 A 09:30"); 
-  lcd.setCursor (0,1);
-  lcd.print("Juego de rol DYD");
+  //lcd.setCursor(0,0);
+  //lcd.print("08:00 A 09:30"); 
+  //lcd.setCursor (0,1);
+  //lcd.print("Juego de rol DYD");
 }
 
-void loop() { 
+void Clase(String dato);
 
-  lcd.display();
-  delay(1000);
-  lcd.noDisplay();
-  delay(50);
+void Clase(String dato){
+  lcd.setCursor(0,0);
+  lcd.print(dato);
+  lcd.setCursor (0,1);
+  lcd.print("Juego de rol DYD");
+  delay(5000);
+  lcd.noBacklight(); // Apaga la retroiluminación después de mostrar el mensaje
+  delay(2000); // Mantiene la pantalla apagada durante 2 segundos
+  lcd.backlight(); // Vuelve a encender la retroiluminación
+}
+void loop() { 
+  String clase="DA";
+  //lcd.display();
+  //delay(1000);
+  //lcd.noDisplay();
+  //delay(50);
+  Clase(clase);
 }
