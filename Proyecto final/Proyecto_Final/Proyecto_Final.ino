@@ -31,7 +31,6 @@ char *nombre_Evento = { "Disponible", "Receso", "ALmuerzo", "Lenguaje1", "Lengua
 int Append(List *horario{inicio,fin,nombre_Evento});
 void setup() {
   // put your setup code here, to run once:
-
 }
 
 void loop() {
