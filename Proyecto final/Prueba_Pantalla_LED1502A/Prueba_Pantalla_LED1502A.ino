@@ -23,6 +23,10 @@ void Clase(String dato){
   lcd.setCursor (0,1);
   lcd.print("Juego de rol DYD");
   delay(5000);
+  lcd.setCursor(0,0);
+  lcd.print("                ");
+  lcd.setCursor (0,1);
+  lcd.print("                ");
   //lcd.noBacklight(); // Apaga la retroiluminación después de mostrar el mensaje
   //delay(2000); // Mantiene la pantalla apagada durante 2 segundos
   //lcd.backlight(); // Vuelve a encender la retroiluminación
@@ -32,17 +36,49 @@ void Bloques(String dato,int hora){
   if(hora==0){
     lcd.setCursor(0,0);
     lcd.print(dato);
+    lcd.setCursor (0,1);
+    lcd.print("                ");
     delay(5000);
+
   }
   else if(hora==1){
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     lcd.print(dato);
+    lcd.setCursor (0,1);
+    lcd.print("                ");
     delay(5000);
   }
+  lcd.setCursor(0,0);
+  lcd.print("                ");
+  lcd.setCursor (0,1);
+  lcd.print("                ");
 }
 
 void Materias(String dato, int hora){
-  //intertar con swhis
+  switch (hora){; 
+  case 0:
+    lcd.setCursor(0,0);
+    lcd.print(dato);
+    lcd.setCursor (0,1);
+    lcd.print("                ");
+    delay(5000);
+    lcd.setCursor(0,0);
+    lcd.print("                ");
+    lcd.setCursor (0,1);
+    lcd.print("                ");
+    break;
+  case 1:
+    lcd.setCursor(0,0);
+    lcd.print(dato);
+    lcd.setCursor (0,1);
+    lcd.print("                ");
+    delay(5000);
+    lcd.setCursor(0,0);
+    lcd.print("                ");
+    lcd.setCursor (0,1);
+    lcd.print("                ");
+    break;
+  }
 } 
 void loop() { 
   int hora=0;
@@ -53,9 +89,17 @@ void loop() {
   //delay(50);
   Clase(clase);
   delay(2000);
+  clase="Zapallo melones ";
   Bloques(clase,hora);
   delay(2000);
   hora++;
+  clase="tomate sandia";
   Bloques(clase,hora);
   delay(2000);
+  hora=0;
+  clase="Zanahorias";
+  Materias(clase,hora);
+  hora=1;
+  clase="caserita";
+  Materias(clase,hora);
 }
