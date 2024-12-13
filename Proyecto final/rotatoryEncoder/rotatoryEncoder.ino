@@ -31,15 +31,21 @@ struct Node {     //Node que contiene los IDs de las tarjetas
   Node *prev;
 };
 
+void SetTime();
 Node* CreateNode(Horario data);
 int ListAppend(List *list, Horario data);
 Horario ListGet(List *list, int index);
+Horario ListNext(List *list, Horario actual, unsigned long timer);
 
-List horarios[5] = { 0 };
+List horarios[7] = { 0 };
 const char *nombreEvento[] = { "Disponible", "Receso", "Almuerzo", "Lenguaje 1", "Lenguaje 2", "Herramientas de Desarrollo", "Formación Profesional III", "Base de Datos", "Estructura de Datos", "Introducción a la Investigación", "Dibujo de Ingeniería", "Formación Profesional III" };
+Horario actual = { 0UL, 0UL, 0 };
+int dia = 0;
 
 unsigned long timer = 0;
 unsigned long aux = 0;
+char incrementAmount = 0;
+char incrementMax = 0;
 int direction = DIRECTION_CW;
 int CLK_state;
 int prev_CLK_state;
@@ -75,25 +81,25 @@ void setup() {
   ListAppend(&horarios[1], (Horario) { 45600UL*TIME, 50400UL*TIME, 2 });
   ListAppend(&horarios[1], (Horario) { 55800UL*TIME, 56400UL*TIME, 1 });
   
-  ListAppend(&horarios[0], (Horario) { 34800UL*TIME, 40200UL*TIME, 8 });
-  ListAppend(&horarios[0], (Horario) { 40800UL*TIME, 45600UL*TIME, 9 });
-  ListAppend(&horarios[0], (Horario) { 56400UL*TIME, 61800UL*TIME, 8 });
+  ListAppend(&horarios[1], (Horario) { 34800UL*TIME, 40200UL*TIME, 8 });
+  ListAppend(&horarios[1], (Horario) { 40800UL*TIME, 45600UL*TIME, 9 });
+  ListAppend(&horarios[1], (Horario) { 56400UL*TIME, 61800UL*TIME, 8 });
   // Miércoles
   ListAppend(&horarios[2], (Horario) { 34200UL*TIME, 34800UL*TIME, 1 });
   ListAppend(&horarios[2], (Horario) { 40200UL*TIME, 40800UL*TIME, 1 });
   ListAppend(&horarios[2], (Horario) { 45600UL*TIME, 50400UL*TIME, 2 });
   ListAppend(&horarios[2], (Horario) { 55800UL*TIME, 56400UL*TIME, 1 });
   
-  ListAppend(&horarios[0], (Horario) { 28800UL*TIME, 34200UL*TIME, 11 });
-  ListAppend(&horarios[0], (Horario) { 50400UL*TIME, 55800UL*TIME, 10 });
+  ListAppend(&horarios[2], (Horario) { 28800UL*TIME, 34200UL*TIME, 11 });
+  ListAppend(&horarios[2], (Horario) { 50400UL*TIME, 55800UL*TIME, 10 });
   // Jueves
   ListAppend(&horarios[3], (Horario) { 34200UL*TIME, 34800UL*TIME, 1 });
   ListAppend(&horarios[3], (Horario) { 40200UL*TIME, 40800UL*TIME, 1 });
   ListAppend(&horarios[3], (Horario) { 45600UL*TIME, 50400UL*TIME, 2 });
   ListAppend(&horarios[3], (Horario) { 55800UL*TIME, 56400UL*TIME, 1 });
   
-  ListAppend(&horarios[0], (Horario) { 34800UL*TIME, 40200UL*TIME, 8 });
-  ListAppend(&horarios[0], (Horario) { 50400UL*TIME, 55800UL*TIME, 6 });
+  ListAppend(&horarios[3], (Horario) { 34800UL*TIME, 40200UL*TIME, 8 });
+  ListAppend(&horarios[3], (Horario) { 50400UL*TIME, 55800UL*TIME, 6 });
   // Viernes
   ListAppend(&horarios[4], (Horario) { 34200UL*TIME, 34800UL*TIME, 1 });
   ListAppend(&horarios[4], (Horario) { 40200UL*TIME, 40800UL*TIME, 1 });
@@ -102,18 +108,15 @@ void setup() {
   
 }
 
-// the loop routine runs over  and over again forever:
 void loop() {
-    button.loop();  // MUST call the loop() function first
+  button.loop();  // MUST call the loop() function first
 
-  // read the current state of the rotary encoder's CLK pin
+  // Lee el estado actual del codificador a través del pin CLK
   CLK_state = digitalRead(CLK_PIN);
 
-  // If the state of CLK is changed, then pulse occurred
-  // React to only the rising edge (from LOW to HIGH) to avoid double count
+  // Si el estado de CLK cambia, entonces se causa un pulso
+  // Reacciona sólo a la subida de potencial (de bajo a alto) para evitar conteo doble
   if (CLK_state != prev_CLK_state && CLK_state == HIGH) {
-    // if the DT state is HIGH
-    // the encoder is rotating in counter-clockwise direction => decrease the counter
     if ((digitalRead(DT_PIN) == HIGH) && settingTime) {
       timer += step*TIME;
     }
@@ -122,53 +125,64 @@ void loop() {
   // save last CLK state
   prev_CLK_state = CLK_state;
 
-  if (button.isPressed()) {
-    if (!settingTime) settingTime = true;
-    else {
-      switch (setting) {
-        case 0:
-          setting = 1;
-          step = 60UL;
-          break;
-        case 1:
-          setting = 2;
-          step = 600UL;
-          break;
-        case 2:
-          setting = 3;
-          step = 3600UL;
-          break;
-        case 3:
-          setting = 4;
-          step = 36000UL;
-          break;
-        case 4:
-          setting = 0;
-          step = 0UL;
-          settingTime = false;
-          break;
-      }
+  // Para poner la hora con el codificador rotacional
+  if (button.isPressed()) SetTime();
+  
+  if (timer > actual.fin) actual = ListNext(&horarios[dia], actual, timer);
+  
+  if (!settingTime) timer += (millis() - aux);
+  if (timer > 86400*TIME) {
+    timer %= (86400*TIME);
+    dia = (dia + 1)%7;
+    actual = (Horario) { 0UL, 0UL, 0};
+  }
+  if (!settingTime) aux = millis();
+
+  Serial.print(dia); // Dia
+  Serial.print(" - ");
+  Serial.print((int) floor(timer/(36000UL*TIME))%3); // Obtengo la decena de la hora
+  Serial.print(" ");
+  Serial.print((int) floor(timer/(3600UL*TIME))%10); // Obtengo la unidad de la hora
+  Serial.print(" ");
+  Serial.print((int) floor(timer/(600UL*TIME))%6); // Obtengo la decena del minuto
+  Serial.print(" ");
+  Serial.print((int) floor(timer/(60UL*TIME))%10); // Obtengo la unidad del minuto
+  Serial.print(" ");
+  Serial.print(timer);
+  Serial.print(" | ");
+  Serial.print(timer > actual.fin ? nombreEvento[0] : nombreEvento[actual.evento]);
+  Serial.println();
+}
+
+// Para establecer el tiempo
+void SetTime() {
+if (!settingTime) settingTime = true;
+  else {
+    switch (setting) {
+      case 0:
+        setting = 1;
+        step = 60UL;
+        break;
+      case 1:
+        setting = 2;
+        step = 600UL;
+        break;
+      case 2:
+        setting = 3;
+        step = 3600UL;
+        break;
+      case 3:
+        setting = 4;
+        step = 36000UL;
+        break;
+      case 4:
+        setting = 0;
+        step = 0UL;
+        settingTime = false;
+        break;
     }
   }
-  if (!settingTime) timer += (millis() - aux);
-  timer %= (86400*TIME);
-  if (!settingTime) aux = millis();
-  /*
-  Display(0, (int) floor(timer/(36000UL*TIME))%3); // Obtengo la decena de la hora
-  Display(1, (int) floor(timer/(3600UL*TIME))%10); // Obtengo la unidad de la hora
-  Display(2, (int) floor(timer/(600UL*TIME))%6); // Obtengo la decena del minuto
-  Display(3, (int) floor(timer/(60UL*TIME))%10); // Obtengo la unidad del minuto
-  
-  Serial.print(timer);
-  Serial.println();
-  */
 }
-
-void Display(int display, int value) {
-  Serial.print(value);
-  Serial.print(" ");
-}
-
 
 // Function to create a new node
 Node* CreateNode(Horario data) {
@@ -213,7 +227,7 @@ int ListAppend(List *list, Horario data) {
     return 1;
 }
 
-// Function to get data at a specified index
+// Obtengo horario en un determinado índice
 Horario ListGet(List *list, int index) {
     if (index < 0 || index >= list->size) {
         printf("Index out of bounds\n");
@@ -223,4 +237,15 @@ Horario ListGet(List *list, int index) {
     Node *current;
     for (i = 0, current = list->tail; i < index; i++, current = current->next);
     return current->data;
+}
+
+// 
+Horario ListNext(List *list, Horario data, unsigned long timer) {
+  if (list-> size == 0) return data;
+  Node *current;
+  int i;
+  for (i = 0, current = list->tail; i< list->size; i++, current = current->next) {
+    if (current->data.inicio < timer && actual.fin <= current->data.inicio) return current->data;
+  }
+  return data;
 }
