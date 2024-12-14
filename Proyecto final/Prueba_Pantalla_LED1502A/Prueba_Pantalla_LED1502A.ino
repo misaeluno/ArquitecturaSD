@@ -21,7 +21,7 @@ void Clase(String dato){
   lcd.setCursor(0,0);
   lcd.print(dato);
   lcd.setCursor (0,1);
-  lcd.print("Juego de rol DYD");
+  lcd.print("Juego de rol D&D");
   delay(5000);
   lcd.setCursor(0,0);
   lcd.print("                ");
