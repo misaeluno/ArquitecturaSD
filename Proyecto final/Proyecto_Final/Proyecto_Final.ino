@@ -36,6 +36,7 @@ void SetTime();
 Node* CreateNode(Horario data);
 int ListAppend(List *list, Horario data);
 Horario ListNext(List *list, Horario actual);
+bool ListThereIsNext(List *list, Horario data);
 void Clase(Horario data);
 
 List horarios[7] = { 0 };
@@ -75,6 +76,7 @@ void setup() {
   ListAppend(&horarios[0], (Horario) { 45600UL*TIME, 50400UL*TIME, 2 });
   ListAppend(&horarios[0], (Horario) { 55800UL*TIME, 56400UL*TIME, 1 });
   
+  ListAppend(&horarios[0], (Horario) { 28800UL*TIME, 34200UL*TIME, 11 }); // Borrar este
   ListAppend(&horarios[0], (Horario) { 34800UL*TIME, 40200UL*TIME, 5 });
   ListAppend(&horarios[0], (Horario) { 40800UL*TIME, 45600UL*TIME, 5 });
   ListAppend(&horarios[0], (Horario) { 50400UL*TIME, 55800UL*TIME, 6 });
@@ -135,16 +137,19 @@ void loop() {
   if (button.isPressed()) SetTime();
   
   siguiente = ListNext(&horarios[dia], actual);
-  if ((actual.inicio != siguiente.inicio && actual.fin != siguiente.fin && actual.evento != siguiente.evento) || actual.inicio) {
-    Clase(actual);
+  if ((actual.inicio != siguiente.inicio && actual.fin != siguiente.fin && actual.evento != siguiente.evento)) {
+    Clase(siguiente);
   }
   actual = siguiente;
   
-  if (!settingTime) timer += (millis() - aux);
+  if (!settingTime) {
+    timer += (millis() - aux);
+  }
   if (timer > 86400*TIME) {
     timer %= (86400*TIME);
     dia = (dia + 1)%7;
     actual = (Horario) { 0UL, 0UL, 0};
+    siguiente = (Horario) { 0UL, 0UL, 0};
     Clase(actual);
   }
   if (!settingTime) aux = millis();
@@ -238,10 +243,21 @@ Horario ListNext(List *list, Horario data) {
   if (list-> size == 0) return data;
   Node *current;
   int i;
+  if (!ListThereIsNext(list, data) && (data.inicio != data.fin)) return (Horario) { 0UL, 0UL, 0 };
   for (i = 0, current = list->tail; i< list->size; i++, current = current->next) {
     if (current->data.inicio < timer && data.fin <= current->data.inicio) return current->data;
   }
   return data;
+}
+
+bool ListThereIsNext(List *list, Horario data) {
+  if (list-> size == 0) return false;
+  Node *current;
+  int i;
+  for (i = 0, current = list->tail; i< list->size; i++, current = current->next) {
+    if (current->data.inicio == data.fin) return true;
+  }
+  return false;
 }
 
 void Clase(Horario data){
@@ -250,7 +266,8 @@ void Clase(Horario data){
   lcd.setCursor (0,1);
   lcd.print("                ");
   String tiempo = (dia == 0) ? "Lun" : (dia == 1) ? "Mar" : (dia == 2) ? "Mie" : (dia == 3) ? "Jue" : (dia == 4) ? "Vie" : (dia == 5) ? "Sab" : "Dom";
-  if (!(timer > actual.fin   || timer < actual.inicio)) {
+  //if (!(timer > actual.fin   || timer < actual.inicio)) {
+  if (data.inicio != data.fin) {
     tiempo += "|";
     tiempo += (int) floor(data.inicio/(36000UL*TIME))%3;
     tiempo += (int) floor(data.inicio/(3600UL*TIME))%10;
@@ -263,9 +280,11 @@ void Clase(Horario data){
     tiempo += ":";
     tiempo += (int) floor(data.fin/(600UL*TIME))%6;
     tiempo += (int) floor(data.fin/(60UL*TIME))%10;
+    tiempo += "|";
   }
   lcd.setCursor(0,0);
   lcd.print(tiempo);
   lcd.setCursor (0,1);
-  lcd.print(timer > actual.fin ? nombreEvento[0] : nombreEvento[actual.evento]);
+  //lcd.print(timer > actual.fin ? nombreEvento[0] : nombreEvento[actual.evento]);
+  lcd.print(nombreEvento[data.evento]);
 } 
