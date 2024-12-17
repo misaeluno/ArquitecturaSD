@@ -36,7 +36,6 @@ void SetTime();
 Node* CreateNode(Horario data);
 int ListAppend(List *list, Horario data);
 Horario ListNext(List *list, Horario actual);
-bool ListThereIsNext(List *list, Horario data);
 void Clase(Horario data);
 
 List horarios[7] = { 0 };
@@ -44,6 +43,7 @@ String nombreEvento[] = { "Disponible", "Receso", "Almuerzo", "Lenguaje 1", "Len
 Horario actual = { 0UL, 0UL, 0 };
 Horario siguiente = { 0UL, 0UL, 0 };
 int dia = 0;
+bool once = false;
 
 unsigned long timer = 0;
 unsigned long aux = 0;
@@ -60,6 +60,7 @@ ezButton button(SW_PIN);  // create ezButton object that attach to pin 4
 LiquidCrystal_I2C lcd(0x27,16,2); // si no te sale con esta direccion  puedes usar (0x3f,16,2) || (0x27,16,2)  ||(0x20,16,2) 
 
 void setup() {
+  
   Serial.begin(9600);
   lcd.init();
   lcd.backlight();
@@ -243,26 +244,15 @@ Horario ListNext(List *list, Horario data) {
   if (list-> size == 0) return data;
   Node *current;
   int i;
-  if (!ListThereIsNext(list, data) && (data.inicio != data.fin)) return (Horario) { 0UL, 0UL, 0 };
   for (i = 0, current = list->tail; i< list->size; i++, current = current->next) {
     if (current->data.inicio < timer && data.fin <= current->data.inicio) return current->data;
   }
   return data;
 }
 
-bool ListThereIsNext(List *list, Horario data) {
-  if (list-> size == 0) return false;
-  Node *current;
-  int i;
-  for (i = 0, current = list->tail; i< list->size; i++, current = current->next) {
-    if (current->data.inicio == data.fin) return true;
-  }
-  return false;
-}
-
 void Clase(Horario data){
   lcd.setCursor(0,0);
-  lcd.print("                ");
+  lcd.print("HI              ");
   lcd.setCursor (0,1);
   lcd.print("                ");
   String tiempo = (dia == 0) ? "Lun" : (dia == 1) ? "Mar" : (dia == 2) ? "Mie" : (dia == 3) ? "Jue" : (dia == 4) ? "Vie" : (dia == 5) ? "Sab" : "Dom";
