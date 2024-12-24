@@ -252,7 +252,7 @@ Horario ListNext(List *list, Horario data) {
 
 void Clase(Horario data){
   lcd.setCursor(0,0);
-  lcd.print("HI              ");
+  lcd.print("                ");
   lcd.setCursor (0,1);
   lcd.print("                ");
   String tiempo = (dia == 0) ? "Lun" : (dia == 1) ? "Mar" : (dia == 2) ? "Mie" : (dia == 3) ? "Jue" : (dia == 4) ? "Vie" : (dia == 5) ? "Sab" : "Dom";

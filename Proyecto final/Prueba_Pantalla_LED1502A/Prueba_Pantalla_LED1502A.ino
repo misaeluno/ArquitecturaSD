@@ -4,102 +4,52 @@
 LiquidCrystal_I2C lcd(0x27,16,2); // si no te sale con esta direccion  puedes usar (0x3f,16,2) || (0x27,16,2)  ||(0x20,16,2) 
 
 void setup() {
+  Serial.begin(9600);
   lcd.init();
   lcd.backlight();
   lcd.clear();
-  //lcd.setCursor(0,0);
-  //lcd.print("08:00 A 09:30"); 
-  //lcd.setCursor (0,1);
-  //lcd.print("Juego de rol DYD");
+                          //12
+  String nombreEvento[] = { "Disponible", "Receso", "Almuerzo", "Lenguaje 1", "Lenguaje 2", "Herramientas de Desarrollo", "Formacion Profesional III", "Base de Datos", "Estructura de Datos", "Introduccion a la Investigacion", "Dibujo de Ingenieria", "Formacion Profesional III" };
 }
 
-void Clase(String dato);
-void Bloques(String dato, int hora);
-void Materias(String dato, int hora);
-
-void Clase(String dato){
-  lcd.setCursor(0,0);
-  lcd.print(dato);
-  lcd.setCursor (0,1);
-  lcd.print("Juego de rol D&D");
-  delay(5000);
-  lcd.setCursor(0,0);
-  lcd.print("                ");
-  lcd.setCursor (0,1);
-  lcd.print("                ");
-  //lcd.noBacklight(); // Apaga la retroiluminación después de mostrar el mensaje
-  //delay(2000); // Mantiene la pantalla apagada durante 2 segundos
-  //lcd.backlight(); // Vuelve a encender la retroiluminación
-}
-
-void Bloques(String dato,int hora){
-  if(hora==0){
-    lcd.setCursor(0,0);
-    lcd.print(dato);
-    lcd.setCursor (0,1);
-    lcd.print("                ");
-    delay(5000);
-
-  }
-  else if(hora==1){
-    lcd.setCursor(0,0);
-    lcd.print(dato);
-    lcd.setCursor (0,1);
-    lcd.print("                ");
-    delay(5000);
-  }
-  lcd.setCursor(0,0);
-  lcd.print("                ");
-  lcd.setCursor (0,1);
-  lcd.print("                ");
-}
-
-void Materias(String dato, int hora){
-  switch (hora){; 
-  case 0:
-    lcd.setCursor(0,0);
-    lcd.print(dato);
-    lcd.setCursor (0,1);
-    lcd.print("                ");
-    delay(5000);
-    lcd.setCursor(0,0);
-    lcd.print("                ");
-    lcd.setCursor (0,1);
-    lcd.print("                ");
-    break;
-  case 1:
-    lcd.setCursor(0,0);
-    lcd.print(dato);
-    lcd.setCursor (0,1);
-    lcd.print("                ");
-    delay(5000);
-    lcd.setCursor(0,0);
-    lcd.print("                ");
-    lcd.setCursor (0,1);
-    lcd.print("                ");
-    break;
-  }
-} 
 void loop() { 
-  int hora=0;
-  String clase="DA";
-  //lcd.display();
-  //delay(1000);
-  //lcd.noDisplay();
-  //delay(50);
-  Clase(clase);
-  delay(2000);
-  clase="Zapallo melones ";
-  Bloques(clase,hora);
-  delay(2000);
-  hora++;
-  clase="tomate sandia";
-  Bloques(clase,hora);
-  delay(2000);
-  hora=0;
-  clase="Zanahorias";
-  Materias(clase,hora);
-  hora=1;
-  clase="caserita";
-  Materias(clase,hora);
+  int cont=0;
+  int i=0;
+  int j=0;
+  int k;
+  int hor=8;
+  int min=0;
+  int seg=0;
+  Serial.println("hola");
+  for(hor ; hor<=23 ; hor++){
+    for(min ; min<=60 ; min++){
+      for(seg ; seg<=60 ; seg++){
+        Serial.print(hor);
+        Serial.print(min);
+        Serial.print(seg);
+        Serial.println(" - ");
+      }
+      seg=0;
+      //Serial.println(" - ");
+      if(hor>=(8+i) && min>=(0+j) && cont==0){
+        Serial.println("HAHAHAHAHA");
+        cont++;
+        i++;
+        j=j+40;
+        if(j>60){
+          k=j-60;
+          i++;
+          j=k;
+        }
+        Serial.println(i);
+        Serial.println(j);
+        delay(3000);
+      }
+    }
+    cont=0;
+    min=0;
+    Serial.println(" cambio de hora");
+    delay(1000);
+  }
+  hor=8;
 }
